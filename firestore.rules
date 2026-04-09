@@ -1,0 +1,130 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Fields:
+    //   - email: string (required)
+    //   - role: string (required, 'admin' or 'user')
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: categories
+    // Fields:
+    //   - name: string (required)
+    //   - icon: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: courses
+    // Fields:
+    //   - categoryId: string (required)
+    //   - title: string (required)
+    //   - description: string (optional)
+    //   - thumbnail: string (optional)
+    //   - videoUrl: string (required)
+    //   - instructorName: string (optional)
+    //   - instructorBio: string (optional)
+    //   - rating: number (optional)
+    //   - ratingCount: number (optional)
+    //   - joinCount: number (optional)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: ratings
+    // Fields:
+    //   - courseId: string (required)
+    //   - userId: string (required)
+    //   - userName: string (required)
+    //   - rating: number (required, 1-5)
+    //   - comment: string (optional)
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+        (request.auth.token.email == "hani.almufti@gmail.com")
+      );
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'role', 'createdAt']) &&
+             data.email is string &&
+             data.role in ['admin', 'user'] &&
+             data.createdAt is timestamp &&
+             (!('displayName' in data) || data.displayName is string) &&
+             (!('interests' in data) || data.interests is list) &&
+             (!('onboarded' in data) || data.onboarded is bool) &&
+             (!('isGuest' in data) || data.isGuest is bool);
+    }
+
+    function isValidCategory(data) {
+      return data.keys().hasAll(['name', 'icon', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.icon is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidCourse(data) {
+      return data.keys().hasAll(['categoryId', 'title', 'videoUrl', 'createdAt']) &&
+             data.categoryId is string &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.videoUrl is string &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidRating(data) {
+      return data.keys().hasAll(['courseId', 'userId', 'userName', 'rating', 'createdAt']) &&
+             data.courseId is string &&
+             data.userId == request.auth.uid &&
+             data.userName is string &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == 'user';
+      allow update: if isAuthenticated() && (
+        (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin() && isValidCategory(request.resource.data);
+    }
+
+    match /courses/{courseId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin() && isValidCourse(request.resource.data);
+    }
+
+    match /ratings/{ratingId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidRating(request.resource.data);
+      allow update: if isAuthenticated() && isOwner(resource.data.userId) && isValidRating(request.resource.data);
+      allow delete: if isAuthenticated() && (isOwner(resource.data.userId) || isAdmin());
+    }
+  }
+}

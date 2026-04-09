@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "Category": {
+      "title": "Category",
+      "description": "A course category (e.g., Programming, Design).",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Category name in Arabic." },
+        "icon": { "type": "string", "description": "Lucide icon name." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "icon"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "An educational course.",
+      "type": "object",
+      "properties": {
+        "categoryId": { "type": "string", "description": "Reference to Category ID." },
+        "title": { "type": "string", "description": "Course title." },
+        "description": { "type": "string", "description": "Course description." },
+        "thumbnail": { "type": "string", "description": "Thumbnail image URL." },
+        "videoUrl": { "type": "string", "description": "YouTube or other video URL." },
+        "instructorName": { "type": "string", "description": "Instructor's name." },
+        "instructorBio": { "type": "string", "description": "Instructor's biography." },
+        "rating": { "type": "number", "description": "Average rating (1-5)." },
+        "ratingCount": { "type": "integer", "description": "Number of ratings." },
+        "joinCount": { "type": "integer", "description": "Number of users who joined." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["categoryId", "title", "videoUrl"]
+    },
+    "Rating": {
+      "title": "Rating",
+      "description": "A user rating for a course.",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["courseId", "userId", "rating"]
+    },
+    "User": {
+      "title": "User",
+      "description": "A platform user.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "onboarded": { "type": "boolean" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "categories": { "schema": "Category", "description": "List of course categories." },
+    "courses": { "schema": "Course", "description": "List of available courses." },
+    "ratings": { "schema": "Rating", "description": "User ratings and comments." },
+    "users": { "schema": "User", "description": "User profiles and roles." }
+  }
+}

@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-arabic: "Cairo", sans-serif;
+}
+
+@variant light-mode (&:where(.light-mode, .light-mode *));
+
+@layer base {
+  html {
+    direction: rtl;
+    font-family: var(--font-arabic);
+    font-size: 14px; /* Reduced from default 16px */
+  }
+  
+  body {
+    @apply bg-[#0B0E14] text-slate-100;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    transition: background-color 0.3s ease;
+  }
+
+  .light-mode body {
+    @apply bg-[#F9FAFB] text-slate-900;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+  }
+
+  .light-mode .text-white {
+    @apply text-slate-900;
+  }
+
+  .light-mode .text-slate-100 {
+    @apply text-slate-900;
+  }
+
+  .light-mode .text-slate-200 {
+    @apply text-slate-800;
+  }
+
+  .light-mode .text-slate-300 {
+    @apply text-slate-700;
+  }
+
+  .light-mode .text-slate-400 {
+    @apply text-slate-600;
+  }
+
+  .light-mode .text-purple-400 {
+    @apply text-purple-600;
+  }
+
+  .light-mode .text-purple-300 {
+    @apply text-purple-500;
+  }
+
+  .light-mode .text-indigo-400 {
+    @apply text-indigo-600;
+  }
+
+  .light-mode .hover\:text-white:hover {
+    @apply text-slate-900;
+  }
+
+  .light-mode .group:hover .group-hover\:text-white {
+    @apply text-slate-900;
+  }
+
+  .light-mode .group:hover .group-hover\:text-purple-400 {
+    @apply text-purple-600;
+  }
+
+  .light-mode .border-white\/5,
+  .light-mode .border-white\/10,
+  .light-mode .border-white\/20 {
+    @apply border-slate-200;
+  }
+
+  .light-mode .bg-white\/5,
+  .light-mode .bg-white\/10 {
+    @apply bg-slate-100;
+  }
+
+  .light-mode .bg-purple-600\/20 {
+    @apply bg-purple-100;
+  }
+
+  .light-mode .bg-emerald-600\/20 {
+    @apply bg-emerald-100;
+  }
+
+  .light-mode .bg-amber-600\/20 {
+    @apply bg-amber-100;
+  }
+
+  .light-mode .bg-violet-600\/20 {
+    @apply bg-violet-100;
+  }
+
+  .light-mode .bg-slate-800 {
+    @apply bg-slate-200;
+  }
+
+  .light-mode .bg-slate-900 {
+    @apply bg-slate-100;
+  }
+
+  .light-mode .border-slate-900 {
+    @apply border-white;
+  }
+
+  /* Exceptions for buttons and elements that should remain white text */
+  .light-mode .bg-purple-600 .text-white,
+  .light-mode .bg-gradient-to-r .text-white,
+  .light-mode .bg-gradient-to-br .text-white,
+  .light-mode button.bg-purple-600,
+  .light-mode .bg-purple-600 {
+    @apply text-white!;
+  }
+
+  .header-main {
+    @apply bg-[#0B0E14]/80 backdrop-blur-xl border-b border-white/5;
+  }
+
+  .light-mode .header-main {
+    @apply bg-white/80 border-slate-200;
+  }
+
+  .footer-main {
+    @apply bg-[#0B0E14] border-t border-white/5;
+  }
+
+  .light-mode .footer-main {
+    @apply bg-white border-t border-slate-200;
+  }
+}
+
+.glass {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
+}
+
+.light-mode .glass {
+  @apply bg-white/60 backdrop-blur-xl border border-slate-200 shadow-xl;
+}
+
+.glass-card {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300;
+}
+
+.light-mode .glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-slate-200 shadow-lg hover:bg-slate-50 transition-all duration-300;
+}
+
+.glass-dark {
+  @apply bg-black/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400;
+}
+
+.light-mode .text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-violet-600;
+}
+
+.arabic-text {
+  font-family: var(--font-arabic);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-purple-500/30 rounded-full hover:bg-purple-500/50 transition-colors;
+}
